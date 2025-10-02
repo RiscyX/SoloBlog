@@ -13,13 +13,13 @@ export async function GET(request: NextRequest) {
   if (token_hash && type) {
     const supabase = await createClient();
 
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
     });
-    if (!error) {
-      // Email confirmed successfully - redirect to main page
-      return NextResponse.redirect(new URL("/account", request.url));
+    if (!error && data.user) {
+      // Email confirmed successfully - the confirmed user is now logged in
+      return NextResponse.redirect(new URL("/", request.url));
     } else {
       // Error confirming email
       return NextResponse.redirect(

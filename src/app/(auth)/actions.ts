@@ -101,5 +101,5 @@ export async function signup(prevState: any, formData: FormData): Promise<{ erro
     redirect(`/error?message=${encodeURIComponent("Signup failed. Please try again.")}&from=signup`);
   }
 
-  redirect("/auth/confirm?message=Check your email to confirm your account&from=signup");
+  redirect("/verify");
 }
