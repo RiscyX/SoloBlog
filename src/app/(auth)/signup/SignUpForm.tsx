@@ -58,7 +58,7 @@ export default function SignUpForm() {
         disabled={pending}
         className={`w-full p-2 my-3 text-white rounded ${styles["auth-button"]}`}
       >
-        {pending ? "Signing in..." : "Sign Up"}
+        {pending ? "Signing up..." : "Sign Up"}
       </button>
     </form>
   );

@@ -48,6 +48,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 
   async function updateProfile({
     username,
+    fullname,
     website,
     avatar_url,
   }: {
