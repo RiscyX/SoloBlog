@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: "class",
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -30,8 +35,8 @@ const config: Config = {
         "2xl": "1.25rem",
       },
       boxShadow: {
-        card: "0 4px 12px hsl(var(--fg) / 0.08)",
-        "card-dark": "0 4px 12px hsl(var(--fg) / 0.4)",
+        card: "0 4px 12px hsl(var(--fg) / 0.2)",
+        "card-dark": "0 4px 12px hsl(var(--fg) / 0.3)",
       },
     },
   },

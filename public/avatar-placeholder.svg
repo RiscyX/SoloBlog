@@ -1,0 +1,20 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="avatarBg" x1="12" y1="10" x2="68" y2="74" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F5D7C6" />
+      <stop offset="40%" stop-color="#F1BBA2" />
+      <stop offset="100%" stop-color="#EB8F80" />
+    </linearGradient>
+    <linearGradient id="avatarTop" x1="24" y1="12" x2="56" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#281A4C" />
+      <stop offset="100%" stop-color="#4C2784" />
+    </linearGradient>
+  </defs>
+  <rect width="80" height="80" rx="24" fill="url(#avatarBg)" />
+  <path d="M21 66C24.5 54 32 50 40 50C48 50 55.5 54 59 66" stroke="white" stroke-width="4" stroke-linecap="round" />
+  <circle cx="40" cy="33" r="16" fill="#FDE8DD" />
+  <path d="M24 36C24 24 34 18 40 18C46 18 56 24 56 36H24Z" fill="url(#avatarTop)" />
+  <path d="M33 34C33 32.8954 33.8954 32 35 32C36.1046 32 37 32.8954 37 34C37 35.1046 36.1046 36 35 36C33.8954 36 33 35.1046 33 34Z" fill="#45215F" />
+  <path d="M43 34C43 32.8954 43.8954 32 45 32C46.1046 32 47 32.8954 47 34C47 35.1046 46.1046 36 45 36C43.8954 36 43 35.1046 43 34Z" fill="#45215F" />
+  <path d="M33 40C35 42 37 43 40 43C43 43 45 42 47 40" stroke="#E18B88" stroke-width="3" stroke-linecap="round" />
+</svg>

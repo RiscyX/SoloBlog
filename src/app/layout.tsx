@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { solway } from "./fonts";
+import { Solway } from 'next/font/google';
 
 import Navbar from "../components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+export const solway = Solway({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-solway',
+  weight: ['400','500','700'],
 });
 
 export const metadata: Metadata = {
