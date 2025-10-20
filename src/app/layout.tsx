@@ -26,9 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${solway.variable} antialiased`}>
-      <body
-      >
+    <html lang="en" className={`${solway.variable} antialiased dark`}>
+      <body className="min-h-screen bg-bg text-fg transition-colors">
         <Navbar />
         <main className="min-h-screen">
           {children}
