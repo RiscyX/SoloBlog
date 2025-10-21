@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(prevState: any, formData: FormData): Promise<{ errors?: any } | void> {
+export async function login(prevState: any, formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -35,7 +35,7 @@ export async function login(prevState: any, formData: FormData): Promise<{ error
 
   if (error) {
     console.log("Login error:", error.message);
-    redirect(`/error?message=${encodeURIComponent("Login failed. Please check your credentials.")}&from=login`);
+    redirect(`/error?message=${encodeURIComponent("Login failed.")}&from=login`);
   }
 
   // Check if email is confirmed
@@ -51,7 +51,7 @@ export async function login(prevState: any, formData: FormData): Promise<{ error
   redirect("/account");
 }
 
-export async function signup(prevState: any, formData: FormData): Promise<{ errors?: any } | void> {
+export async function signup(prevState: any, formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;

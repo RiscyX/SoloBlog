@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { solway } from "./fonts";
-
 import Navbar from "../components/Navbar";
 
 const geistSans = Geist({
@@ -17,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Blog CMS",
-  description: "Blog CMS built with Next.js and TypeScript powered with Supabase",
+  description:
+    "Blog CMS built with Next.js and TypeScript powered with Supabase",
 };
 
 export default function RootLayout({
@@ -26,13 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${solway.variable} antialiased`}>
-      <body
-      >
+    <html lang="en" className={`${solway.variable} antialiased dark`}>
+      <body className="min-h-screen bg-bg text-fg transition-colors">
         <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   );

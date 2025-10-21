@@ -1,9 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Ha van külön tokens.css fájlod, ide is beimportálhatod */
-@import "./tokens.css";
+/* tokens.css */
+:root {
+  --bg: 0 0% 98%;
+  --fg: 222 15% 12%;
+  --card: 0 0% 100%;
+  --muted: 220 10% 45%;
+  --border: 220 15% 85%;
+  --input: 220 15% 90%;
+  --ring: 262 83% 58%;
+  --primary: 262 83% 58%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 92%;
+  --accent: 280 70% 62%;
+  --success: 150 45% 40%;
+  --warning: 40 90% 50%;
+  --destructive: 0 75% 50%;
+}
+
+/* Pontosíts: ugyanarra az elemre célozz, ahol a .dark ül */
+:root.dark, html.dark {
+  --bg: 222 27% 10%;
+  --fg: 220 20% 95%;
+  --card: 222 22% 14%;
+  --muted: 220 10% 65%;
+  --border: 220 10% 26%;
+  --input: 222 16% 20%;
+  --ring: 262 83% 60%;
+  --primary: 262 83% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 15% 18%;
+  --accent: 280 70% 62%;
+  --success: 150 45% 50%;
+  --warning: 40 90% 55%;
+  --destructive: 0 75% 55%;
+}
 
 /* Alap reset + layout */
 html, body {
