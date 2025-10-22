@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { solway } from "./fonts";
+import { Solway } from 'next/font/google';
 
 import Navbar from "../components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+export const solway = Solway({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-solway',
+  weight: ['400','500','700'],
 });
 
 export const metadata: Metadata = {
@@ -26,9 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${solway.variable} antialiased`}>
-      <body
-      >
+    <html lang="en" className={`${solway.variable} antialiased dark`}>
+      <body className="min-h-screen bg-bg text-fg transition-colors">
         <Navbar />
         <main className="min-h-screen">
           {children}
