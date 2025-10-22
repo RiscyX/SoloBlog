@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { signup } from "../actions";
+import { register } from "../actions";
 import { useFormStatus } from "react-dom";
 import styles from "../auth.module.css";
 
-export default function SignUpForm() {
-  const [state, action] = useActionState(signup, undefined);
+export default function RegisterForm() {
+  const [state, action] = useActionState(register, undefined);
 
   function SubmitButton() {
     const { pending } = useFormStatus();
@@ -16,7 +16,7 @@ export default function SignUpForm() {
         disabled={pending}
         className={`w-full p-2 my-3 text-white rounded ${styles["auth-button"]}`}
       >
-        {pending ? "Signing up..." : "Sign Up"}
+        {pending ? "Registering..." : "Register"}
       </button>
     );
   }

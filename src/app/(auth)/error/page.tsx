@@ -20,7 +20,7 @@ export default function ErrorPage({ searchParams }: { searchParams?: { message?:
       </p>
       {
         // Display navigation link based on 'from' parameter
-        // If 'from' is 'signup', show link to Sign Up page; otherwise, show link to Login page
+        // If 'from' is 'register', show link to the Register page; otherwise, show link to Login page
         // This is handled inside the ErrorActions component
       }
       <ErrorActions from={from} />

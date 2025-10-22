@@ -36,10 +36,10 @@ export default function VerifyPage() {
           <div className="text-center text-sm text-gray-400">
             <p>Didn't receive the email? Check your spam folder or</p>
             <Link
-              href="/signup"
+              href="/register"
               className="font-medium text-purple-400 hover:text-purple-300 underline"
             >
-              try signing up again
+              try registering again
             </Link>
           </div>
 

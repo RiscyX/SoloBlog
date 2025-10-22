@@ -21,5 +21,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  redirect("/error?message=Email verification failed.&from=signup");
+  redirect("/error?message=Email verification failed.&from=register");
 }

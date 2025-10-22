@@ -8,9 +8,9 @@ export default function ErrorActions({from}: {from?: string}) {
   return (
     // Link is better than anchor tag for client-side navigation, because it prevents full page reloads
     <>
-      {from === "signup" ? (
-        <Link href="/signup" className={style}>
-          Back to Sign Up
+      {from === "register" ? (
+        <Link href="/register" className={style}>
+          Back to Register
         </Link>
       ) : (
         <Link href="/login" className={style}>

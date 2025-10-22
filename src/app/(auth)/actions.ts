@@ -50,7 +50,7 @@ export async function login(prevState: any, formData: FormData) {
   redirect("/");
 }
 
-export async function signup(prevState: any, formData: FormData) {
+export async function register(prevState: any, formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -99,7 +99,7 @@ export async function signup(prevState: any, formData: FormData) {
   });
 
   if (error) {
-    redirect(`/error?message=${encodeURIComponent("Signup failed.")}&from=signup`);
+    redirect(`/error?message=${encodeURIComponent("Register failed.")}&from=register`);
   }
 
   redirect(`/verify?email=${encodeURIComponent(email)}`);
