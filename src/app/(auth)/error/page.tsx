@@ -1,15 +1,12 @@
-'use client';
+import ErrorActions from "./ErrorActions";
 
-import { use } from "react";
-
-export default function ErrorPage({ searchParams }: { searchParams: Promise<{ message?: string, from?: string }> }) {
-  const resolvedSearchParams = use(searchParams);
-  const message = resolvedSearchParams.message || "Sorry, something went wrong";
-  const from = resolvedSearchParams.from;
+export default function ErrorPage({ searchParams }: { searchParams?: { message?: string, from?: string } }) {
+  const message = searchParams?.message ?? "Sorry, something went wrong";
+  const from = searchParams?.from;
   
   return (
-    <div>
-      <h1>Error</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold mb-2">Error</h1>
       <p>
         {message && message !== "Sorry, something went wrong"
           ? (() => {
@@ -21,11 +18,12 @@ export default function ErrorPage({ searchParams }: { searchParams: Promise<{ me
             })()
           : message}
       </p>
-      {from === "signup" ? (
-        <a href="/signup">Back to Sign Up</a>
-      ) : (
-        <a href="/login">Back to Login</a>
-      )}
+      {
+        // Display navigation link based on 'from' parameter
+        // If 'from' is 'register', show link to the Register page; otherwise, show link to Login page
+        // This is handled inside the ErrorActions component
+      }
+      <ErrorActions from={from} />
     </div>
   );
 }

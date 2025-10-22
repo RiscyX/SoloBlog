@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(prevState: any, formData: FormData): Promise<{ errors?: any } | void> {
+export async function login(prevState: any, formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -34,8 +34,7 @@ export async function login(prevState: any, formData: FormData): Promise<{ error
   });
 
   if (error) {
-    console.log("Login error:", error.message);
-    redirect(`/error?message=${encodeURIComponent("Login failed. Please check your credentials.")}&from=login`);
+    redirect(`/error?message=${encodeURIComponent("Login failed.")}&from=login`);
   }
 
   // Check if email is confirmed
@@ -48,10 +47,10 @@ export async function login(prevState: any, formData: FormData): Promise<{ error
   }
 
   revalidatePath("/", "layout");
-  redirect("/account");
+  redirect("/");
 }
 
-export async function signup(prevState: any, formData: FormData): Promise<{ errors?: any } | void> {
+export async function register(prevState: any, formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -94,12 +93,14 @@ export async function signup(prevState: any, formData: FormData): Promise<{ erro
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/confirm`,
+    },
   });
 
   if (error) {
-    console.error("Signup error:", error.message);
-    redirect(`/error?message=${encodeURIComponent("Signup failed. Please try again.")}&from=signup`);
+    redirect(`/error?message=${encodeURIComponent("Register failed.")}&from=register`);
   }
 
-  redirect("/verify");
+  redirect(`/verify?email=${encodeURIComponent(email)}`);
 }

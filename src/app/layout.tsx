@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Solway } from 'next/font/google';
-
 import Navbar from "../components/Navbar";
 
 
@@ -14,7 +13,8 @@ export const solway = Solway({
 
 export const metadata: Metadata = {
   title: "Blog CMS",
-  description: "Blog CMS built with Next.js and TypeScript powered with Supabase",
+  description:
+    "Blog CMS built with Next.js and TypeScript powered with Supabase",
 };
 
 export default function RootLayout({
@@ -26,9 +26,7 @@ export default function RootLayout({
     <html lang="en" className={`${solway.variable} antialiased dark`}>
       <body className="min-h-screen bg-bg text-fg transition-colors">
         <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <main className="min-h-screen">{children}</main>
       </body>
     </html>
   );

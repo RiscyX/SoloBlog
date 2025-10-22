@@ -36,13 +36,15 @@ export async function updateSession(request: NextRequest) {
 
   // refreshing the auth token
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // It's safe to trust getUser() because it sends a request to the Supabase Auth server every time to revalidate the Auth token.
 
   if (
-    !session?.user &&
+    !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/signup") &&
+    !request.nextUrl.pathname.startsWith("/register") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/error") &&
     !request.nextUrl.pathname.startsWith("/verify") &&

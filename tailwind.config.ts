@@ -27,7 +27,6 @@ const config: Config = {
         destructive: "hsl(var(--destructive) / <alpha-value>)",
       },
       fontFamily: {
-        sans: ["var(--font-solway)", "serif"],
         solway: ["var(--font-solway)", "serif"],
       },
       borderRadius: {

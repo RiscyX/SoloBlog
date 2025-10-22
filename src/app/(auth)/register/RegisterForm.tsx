@@ -1,11 +1,25 @@
 "use client";
 
 import { useActionState } from "react";
-import { signup } from "../actions";
+import { register } from "../actions";
+import { useFormStatus } from "react-dom";
 import styles from "../auth.module.css";
 
-export default function SignUpForm() {
-  const [state, action, pending] = useActionState(signup, undefined);
+export default function RegisterForm() {
+  const [state, action] = useActionState(register, undefined);
+
+  function SubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+      <button
+        type="submit"
+        disabled={pending}
+        className={`w-full p-2 my-3 text-white rounded ${styles["auth-button"]}`}
+      >
+        {pending ? "Registering..." : "Register"}
+      </button>
+    );
+  }
 
   return (
     <form
@@ -13,7 +27,7 @@ export default function SignUpForm() {
       className={`flex flex-col items-center ${styles["auth-form"]}`}
     >
       {state?.errors?.general && (
-        <p style={{ color: "red" }}>{state.errors.general}</p>
+        <p style={{ color: "red" }}>{state.errors.general[0]}</p> // To ensure it's writing latest error
       )}
 
       <div>
@@ -50,16 +64,10 @@ export default function SignUpForm() {
           type="password"
           name="confirmPassword"
           className="w-full p-2 border rounded"
+          required
         />
       </div>
-
-      <button
-        type="submit"
-        disabled={pending}
-        className={`w-full p-2 my-3 text-white rounded ${styles["auth-button"]}`}
-      >
-        {pending ? "Signing up..." : "Sign Up"}
-      </button>
+      <SubmitButton />
     </form>
   );
 }
