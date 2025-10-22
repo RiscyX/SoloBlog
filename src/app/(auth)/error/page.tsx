@@ -5,8 +5,8 @@ export default function ErrorPage({ searchParams }: { searchParams?: { message?:
   const from = searchParams?.from;
   
   return (
-    <div>
-      <h1>Error</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold mb-2">Error</h1>
       <p>
         {message && message !== "Sorry, something went wrong"
           ? (() => {

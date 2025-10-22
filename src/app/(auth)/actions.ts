@@ -34,7 +34,6 @@ export async function login(prevState: any, formData: FormData) {
   });
 
   if (error) {
-    console.log("Login error:", error.message);
     redirect(`/error?message=${encodeURIComponent("Login failed.")}&from=login`);
   }
 
@@ -48,7 +47,7 @@ export async function login(prevState: any, formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/account");
+  redirect("/");
 }
 
 export async function signup(prevState: any, formData: FormData) {
@@ -94,12 +93,14 @@ export async function signup(prevState: any, formData: FormData) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/confirm`,
+    },
   });
 
   if (error) {
-    console.error("Signup error:", error.message);
-    redirect(`/error?message=${encodeURIComponent("Signup failed. Please try again.")}&from=signup`);
+    redirect(`/error?message=${encodeURIComponent("Signup failed.")}&from=signup`);
   }
 
-  redirect("/verify");
+  redirect(`/verify?email=${encodeURIComponent(email)}`);
 }
