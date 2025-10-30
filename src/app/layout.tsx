@@ -33,7 +33,7 @@ export default async function RootLayout({
   } = await supabase.auth.getUser();
 
   return (
-    <html lang="en" className={`${solway.variable} antialiased dark`}>
+    <html lang="en" className={`${solway.variable} antialiased`}>
       <body className="min-h-screen bg-bg text-fg transition-colors">
         <Navbar user={user}/>
         <main className="min-h-screen">{children}</main>
