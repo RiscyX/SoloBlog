@@ -18,7 +18,6 @@ const Navbar = () => {
       document.body.style.overflow = "";
     }
   };
-
   return (
     <>
       <header className="sticky top-4 z-30 w-full px-4">
@@ -30,18 +29,30 @@ const Navbar = () => {
             <BrandMark />
             <span className="text-lg font-semibold">SoloBlog</span>
           </Link>
-
-          {/* Desktop menu */}
-          <div className="hidden items-center gap-2 sm:flex sm:gap-3">
-            <Image
-              src="/avatar-placeholder.svg"
-              alt="Profile avatar"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
-              priority
-            />
-            <ThemeToggle />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/login"
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm"
+            >
+              Register
+            </Link>
+            <Link href="/dashboard">
+              <Image
+                src="/avatar-placeholder.svg"
+                alt="Profile avatar"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
+                priority
+              />
+              <ThemeToggle />
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -102,6 +113,7 @@ const Navbar = () => {
               <ThemeToggle size="large" />
             </div>
           </div>
+          <ThemeToggle />
         </div>
       </div>
     </>
