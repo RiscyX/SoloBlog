@@ -11,9 +11,9 @@ export default function RegisterPage() {
         </div>
         <RegisterForm />
         <div className="text-center mt-6 text-muted text-md">
-          Signed up already?{" "}
+          Have an account?{" "}
           <Link href="/login" className="text-primary hover:text-accent transition-colors">
-            Sign In
+            Log In
           </Link>
         </div>
       </div>

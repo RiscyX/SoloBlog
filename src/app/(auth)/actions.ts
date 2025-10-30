@@ -1,49 +1,73 @@
 "use server";
 
+import {
+  isValidEmail,
+  isNotEmpty,
+  isEqualsToOtherValue,
+  hasMinLength,
+} from "@/utils/validation";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(prevState: any, formData: FormData) {
+export async function login(prevFormState: any, formData: FormData) {
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  if (!email || !password) {
+  let errors = [];
+
+  if (!isNotEmpty(email) || !isNotEmpty(password)) {
+    errors.push("All fields are required");
+  }
+
+  if (!isValidEmail(email)) {
+    errors.push("Invalid email format");
+  }
+
+  if (errors.length > 0) {
     return {
       errors: {
-        general: ["All fields are required"],
+        general: errors,
+      },
+      enteredValues: {
+        email,
+        password,
       },
     };
   }
 
-  const emailregex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailregex.test(email)) {
-    return {
-      errors: {
-        general: ["Invalid email format"],
-      },
-    };
-  }
-
+  // supabase login
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
-    redirect(`/error?message=${encodeURIComponent("Login failed.")}&from=login`);
+    return {
+      errors: {
+        general: [error.message],
+      },
+      enteredValues: {
+        email,
+        password,
+      },
+    };
   }
 
   // Check if email is confirmed
-  if(data.user && !data.user.email_confirmed_at) {
+  if (data.user && !data.user.email_confirmed_at) {
     return {
       errors: {
         general: ["Please confirm your email before logging in."],
-      }
-    }
+      },
+      enteredValues: {
+        email,
+        password,
+      },
+    };
   }
 
   revalidatePath("/", "layout");
@@ -57,35 +81,37 @@ export async function register(prevState: any, formData: FormData) {
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
 
-  if (!email || !password || !confirmPassword) {
-    return {
-      errors: {
-        general: ["All fields are required"],
-      },
-    };
+  let errors = [];
+
+  if (
+    !isNotEmpty(email) ||
+    !isNotEmpty(password) ||
+    !isNotEmpty(confirmPassword)
+  ) {
+    errors.push("All fields are required");
   }
 
-  const emailregex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailregex.test(email)) {
-    return {
-      errors: {
-        general: ["Invalid email format"],
-      },
-    };
+  if (!isValidEmail(email)) {
+    errors.push("Invalid email format");
   }
 
-  if (password.length < 8) {
-    return {
-      errors: {
-        general: ["Password must be at least 8 characters long"],
-      },
-    };
+  if (!hasMinLength(password, 8)) {
+    errors.push("Password must be at least 8 characters long");
   }
 
-  if (password !== confirmPassword) {
+  if (!isEqualsToOtherValue(password, confirmPassword)) {
+    errors.push("Passwords do not match");
+  }
+
+  if (errors.length > 0) {
     return {
       errors: {
-        general: ["Passwords do not match"],
+        general: errors,
+      },
+      enteredValues: {
+        email,
+        password,
+        confirmPassword,
       },
     };
   }
@@ -99,7 +125,16 @@ export async function register(prevState: any, formData: FormData) {
   });
 
   if (error) {
-    redirect(`/error?message=${encodeURIComponent("Register failed.")}&from=register`);
+    return {
+      errors: {
+        general: [error.message],
+      },
+      enteredValues: {
+        email,
+        password,
+        confirmPassword
+      },
+    };
   }
 
   redirect(`/verify?email=${encodeURIComponent(email)}`);
