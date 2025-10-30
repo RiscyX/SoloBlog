@@ -1,8 +1,6 @@
 "use client";
 
 export default function ProfileForm({ user, profile }: any) {
-
-
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     // TODO: Implement form submission logic
   }
@@ -12,10 +10,8 @@ export default function ProfileForm({ user, profile }: any) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-6 rounded shadow-md"
-    >
+    //text-gray-700 dark:text-gray-300
+    <form onSubmit={handleSubmit} className="space-y-4 p-6 rounded shadow-md dark:shadow-md dark:shadow-primary">
       <div>
         <label className="block text-sm font-medium mb-1">Display Name</label>
         <input
@@ -32,7 +28,7 @@ export default function ProfileForm({ user, profile }: any) {
           className="border rounded p-2 w-full h-24"
           placeholder="Write something about yourself..."
         />
-        <p className="text-xs text-gray-500 text-right">
+        <p className="text-xs text-right">
           {/* {bio.length}/150 characters */}
         </p>
       </div>
@@ -45,7 +41,7 @@ export default function ProfileForm({ user, profile }: any) {
       <button
         type="submit"
         //disabled={}
-        className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700"
+        className="text-white bg-blue-600 hover:bg-blue-700  py-2 px-4 rounded"
       >
         Save
       </button>
