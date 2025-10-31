@@ -1,10 +1,11 @@
 "use client";
 
-import { login } from "../actions";
+import { login } from "../actions.ts";
 import { useActionState } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import Submit from "@/components/Submit.jsx";
+import Submit from "@/components/Submit.tsx";
+import Input from "@/components/Input.tsx";
 
 export default function LoginForm() {
   const [formState, formAction] = useActionState(login, null);
@@ -12,39 +13,18 @@ export default function LoginForm() {
 
   return (
     <form action={formAction} className="space-y-8">
-      {formState?.errors?.general && (
-        <ul className="text-red-500 space-y-1">
-          {formState.errors.general.map((error: string) => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
-
       <div>
-        <label
-          htmlFor="email"
-          className="block text-md font-medium text-fg mb-2"
-        >
-          Email
-        </label>
-        <input
+        <Input
+          label="Email"
           id="email"
           type="email"
           name="email"
           placeholder="you@example.com"
-          className="w-full px-4 py-3 bg-input border border-border rounded-lg text-fg placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
           required
         />
-      </div>
 
-      <div>
         <div className="flex items-center justify-between mb-2">
-          <label
-            htmlFor="password"
-            className="block text-md font-medium text-fg"
-          >
-            Password
-          </label>
+          <Input label="Password" id="password" />
           <Link
             href="/forgot-password"
             className="text-md text-primary hover:text-accent transition-colors"
@@ -53,12 +33,12 @@ export default function LoginForm() {
           </Link>
         </div>
         <div className="relative">
-          <input
+          <Input
+            label=""
             id="password"
             type={showPassword ? "text" : "password"}
             name="password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 bg-input border border-border rounded-lg text-fg placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all pr-12"
             required
           />
           <button
@@ -105,7 +85,13 @@ export default function LoginForm() {
           </button>
         </div>
       </div>
-
+      {formState?.errors?.general && (
+        <ul className="text-red-500">
+          {formState?.errors?.general.map((error: string) => (
+            <li key={error}>{error}</li>
+          ))}
+        </ul>
+      )}
       <Submit mode="Login" disableMode="Logging in..." />
     </form>
   );

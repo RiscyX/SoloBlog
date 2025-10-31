@@ -1,70 +1,36 @@
 "use client";
 
 import { useActionState } from "react";
-import { register } from "../actions";
-import { useFormStatus } from "react-dom";
+import { register } from "../actions.ts";
 import { useState } from "react";
-import Submit from "@/components/Submit.jsx";
+import Submit from "@/components/Submit.tsx";
+import Input from "@/components/Input.tsx";
 
 export default function RegisterForm() {
   const [formState, formAction] = useActionState(register, null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  function SubmitButton() {
-    const { pending } = useFormStatus();
-    return (
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full py-3 px-4 bg-primary hover:bg-accent text-primary-foreground font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {pending ? "Creating account..." : "Sign Up"}
-      </button>
-    );
-  }
-
   return (
     <form action={formAction} className="space-y-8">
-      {formState?.errors?.general && (
-        <ul className="text-red-500 space-y-1">
-          {formState.errors.general.map((error: string) => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
+      <Input
+        label="Email"
+        id="email"
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        required
+      />
 
       <div>
-        <label
-          htmlFor="email"
-          className="block text-md font-medium text-fg mb-2"
-        >
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          className="w-full px-4 py-3 bg-input border border-border rounded-lg text-fg placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-md font-medium text-fg mb-2"
-        >
-          Password
-        </label>
+        <Input label="Password" id="password" />
         <div className="relative">
-          <input
+          <Input
+            label=""
             id="password"
             type={showPassword ? "text" : "password"}
             name="password"
             placeholder="••••••••"
-            className="w-full px-4 py-3 bg-input border border-border rounded-lg text-fg placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all pr-12"
             required
           />
           <button
@@ -113,19 +79,14 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-md font-medium text-fg mb-2"
-        >
-          Confirm Password
-        </label>
+        <Input label="Confirm Password" id="confirmPassword" />
         <div className="relative">
-          <input
+          <Input
+            label=""
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
             name="confirmPassword"
             placeholder="••••••••"
-            className="w-full px-4 py-3 bg-input border border-border rounded-lg text-fg placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all pr-12"
             required
           />
           <button
@@ -172,7 +133,13 @@ export default function RegisterForm() {
           </button>
         </div>
       </div>
-
+      {formState?.errors?.general && (
+        <ul className="text-red-500">
+          {formState?.errors?.general.map((error: string) => (
+            <li key={error}>{error}</li>
+          ))}
+        </ul>
+      )}
       <Submit mode="Register" disableMode="Creating account..." />
     </form>
   );

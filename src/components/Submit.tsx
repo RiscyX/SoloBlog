@@ -1,6 +1,11 @@
 import { useFormStatus } from "react-dom";
 
-export default function Submit({ mode, disableMode }) {
+interface SubmitProps {
+  mode: string;
+  disableMode: string;
+}
+
+export default function Submit({ mode, disableMode }: SubmitProps) {
   const { pending } = useFormStatus();
 
   return (

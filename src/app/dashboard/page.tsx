@@ -1,6 +1,13 @@
 import { createClient } from "@/utils/supabase/server";
-import ProfileForm from "./ProfileForm";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
+
+import ProfileForm from "./ProfileForm";
+
+export const metadata: Metadata = {
+  title: "Dashboard | SoloBlog",
+  description: "Manage your blog posts, profile, and account settings.",
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
