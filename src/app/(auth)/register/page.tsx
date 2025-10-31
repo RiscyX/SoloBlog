@@ -1,5 +1,13 @@
 import Link from "next/link";
+import { Metadata } from "next";
+
 import RegisterForm from "./RegisterForm";
+
+export const metadata: Metadata = {
+  title: "Create Account | SoloBlog",
+  description:
+    "Join SoloBlog today. Create an account to start writing and sharing your stories.",
+};
 
 export default function RegisterPage() {
   return (

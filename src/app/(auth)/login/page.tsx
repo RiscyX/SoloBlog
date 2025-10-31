@@ -1,5 +1,13 @@
-import LoginForm from "./LoginForm";
 import Link from "next/link";
+import { Metadata } from "next";
+
+import LoginForm from "./LoginForm.tsx";
+
+export const metadata: Metadata = {
+  title: "Login | SoloBlog",
+  description:
+    "Log in to your SoloBlog account to access your dashboard and manage your content.",
+};
 
 export default function LoginPage() {
   return (
@@ -12,7 +20,10 @@ export default function LoginPage() {
         <LoginForm />
         <div className="text-center mt-6 text-muted text-md">
           Don't have an account?{" "}
-          <Link href="/register" className="text-primary hover:text-accent transition-colors">
+          <Link
+            href="/register"
+            className="text-primary hover:text-accent transition-colors"
+          >
             Register
           </Link>
         </div>

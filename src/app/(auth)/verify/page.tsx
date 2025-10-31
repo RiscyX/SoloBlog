@@ -1,5 +1,12 @@
 import Link from "next/link";
+import { Metadata } from "next";
+
 import styles from "../auth.module.css";
+
+export const metadata: Metadata = {
+  title: "Verify Email | SoloBlog",
+  description: "Verify your email address to complete your registration.",
+};
 
 export default function VerifyPage() {
   return (

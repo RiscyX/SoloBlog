@@ -8,8 +8,8 @@ export function isValidEmail(value: string): boolean {
   return true;
 }
 
-export function isNotEmpty(value: string): boolean {
-  return value.trim() !== "";
+export function isNotEmpty(value: string | null): boolean {
+  return value?.trim() !== "";
 }
 
 export function hasMinLength(value: string, minLength: number): boolean {
