@@ -11,12 +11,17 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (error || !user) {
     redirect("/login");
+  }
+
+  if (!user.email_confirmed_at) {
+    redirect("/verify");
   }
 
   const { data: profile } = await supabase

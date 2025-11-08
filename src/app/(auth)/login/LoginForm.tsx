@@ -1,14 +1,19 @@
 "use client";
 
-import { login } from "../actions.ts";
-import { useActionState } from "react";
-import { useState } from "react";
+import { login, type FormState } from "../actions.ts";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import Submit from "@/components/Submit.tsx";
 import Input from "@/components/Input.tsx";
 
 export default function LoginForm() {
-  const [formState, formAction] = useActionState(login, null);
+  const [formState, formAction] = useActionState<FormState, FormData>(
+    async (prevState, formData) => {
+      return await login(prevState, formData);
+    },
+    { error: null }
+  );
+
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -85,13 +90,7 @@ export default function LoginForm() {
           </button>
         </div>
       </div>
-      {formState?.errors?.general && (
-        <ul className="text-red-500">
-          {formState?.errors?.general.map((error: string) => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
+      {formState?.error && <p className="text-red-500">{formState.error}</p>}
       <Submit mode="Login" disableMode="Logging in..." />
     </form>
   );
