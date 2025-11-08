@@ -6,8 +6,12 @@ import { useState } from "react";
 import Submit from "@/components/Submit.tsx";
 import Input from "@/components/Input.tsx";
 
+type FormState = { error: string | null };
+
 export default function RegisterForm() {
-  const [formState, formAction] = useActionState(register, null);
+  const initialState: FormState = { error: null };
+
+  const [formState, formAction] = useActionState<FormState, FormData>(register, initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -133,13 +137,7 @@ export default function RegisterForm() {
           </button>
         </div>
       </div>
-      {formState?.errors?.general && (
-        <ul className="text-red-500">
-          {formState?.errors?.general.map((error: string) => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
+      {formState?.error && <p className="text-red-500">{formState.error}</p>}
       <Submit mode="Register" disableMode="Creating account..." />
     </form>
   );

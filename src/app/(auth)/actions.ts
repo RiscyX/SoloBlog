@@ -1,141 +1,70 @@
 "use server";
 
-import {
-  isValidEmail,
-  isNotEmpty,
-  isEqualsToOtherValue,
-  hasMinLength,
-} from "@/utils/validation";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
+import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(prevFormState: any, formData: FormData) {
+export type FormState = {
+  error: string | null;
+};
+
+export async function login(
+  _prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const email = String(formData.get("email") ?? "");
+  const password = String(formData.get("password") ?? "");
+
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  let errors = [];
-
-  if (!isNotEmpty(email) || !isNotEmpty(password)) {
-    errors.push("All fields are required");
-  }
-
-  if (!isValidEmail(email)) {
-    errors.push("Invalid email format");
-  }
-
-  if (errors.length > 0) {
-    return {
-      errors: {
-        general: errors,
-      },
-      enteredValues: {
-        email,
-        password,
-      },
-    };
-  }
-
-  // supabase login
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
-    return {
-      errors: {
-        general: [error.message],
-      },
-      enteredValues: {
-        email,
-        password,
-      },
-    };
-  }
-
-  // Check if email is confirmed
-  if (data.user && !data.user.email_confirmed_at) {
-    return {
-      errors: {
-        general: ["Please confirm your email before logging in."],
-      },
-      enteredValues: {
-        email,
-        password,
-      },
-    };
+    if (error.message.includes("Email not confirmed")) {
+      return { error: "Verify your email before you login." };
+    }
+    if (error.message.includes("Invalid login credentials")) {
+      return { error: "Invalid login credentials." };
+    }
+    console.error("Login Error:", error.message);
+    return { error: "Login failed." };
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+
+  redirect("/dashboard");
 }
 
-export async function register(prevState: any, formData: FormData) {
+export async function register(
+  _prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const email = String(formData.get("email") ?? "");
+  const password = String(formData.get("password") ?? "");
+
+  const headersList = await headers();
+  const origin = headersList.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL!;
+
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
-
-  let errors = [];
-
-  if (
-    !isNotEmpty(email) ||
-    !isNotEmpty(password) ||
-    !isNotEmpty(confirmPassword)
-  ) {
-    errors.push("All fields are required");
-  }
-
-  if (!isValidEmail(email)) {
-    errors.push("Invalid email format");
-  }
-
-  if (!hasMinLength(password, 8)) {
-    errors.push("Password must be at least 8 characters long");
-  }
-
-  if (!isEqualsToOtherValue(password, confirmPassword)) {
-    errors.push("Passwords do not match");
-  }
-
-  if (errors.length > 0) {
-    return {
-      errors: {
-        general: errors,
-      },
-      enteredValues: {
-        email,
-        password,
-        confirmPassword,
-      },
-    };
-  }
-
-  const { data, error } = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/confirm`,
+      emailRedirectTo: `${origin}/confirm`,
     },
   });
 
   if (error) {
-    return {
-      errors: {
-        general: [error.message],
-      },
-      enteredValues: {
-        email,
-        password,
-        confirmPassword
-      },
-    };
+    if (error.message.includes("User already registered")) {
+      return { error: "This email is already registered." };
+    }
+    return { error: "Could not register user." };
   }
 
-  redirect(`/verify?email=${encodeURIComponent(email)}`);
+  redirect("/verify");
 }
