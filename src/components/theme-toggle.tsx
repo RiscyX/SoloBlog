@@ -8,9 +8,16 @@ type IconProps = {
   className?: string;
 };
 
-const ThemeToggle = () => {
+type ThemeToggleProps = {
+  size?: 'default' | 'large';
+};
+
+const ThemeToggle = ({ size = 'default' }: ThemeToggleProps = {}) => {
   const [theme, setTheme] = useState<ThemeOption>('dark');
   const [mounted, setMounted] = useState(false);
+
+  const sizeClasses = size === 'large' ? 'h-20 w-20' : 'h-10 w-10';
+  const iconSizeClasses = size === 'large' ? 'h-10 w-10' : 'h-5 w-5';
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -58,7 +65,7 @@ const ThemeToggle = () => {
       type="button"
       aria-label="Toggle theme"
       onClick={toggleTheme}
-      className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-slate-100 text-slate-600 shadow-[inset_0_0_0_1px_rgba(15,23,42,0.06)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-slate-900 dark:text-slate-200 dark:shadow-[inset_0_0_0_1px_rgba(148,163,184,0.15)]"
+      className={`relative flex ${sizeClasses} items-center justify-center overflow-hidden rounded-full bg-slate-100 text-slate-600 shadow-[inset_0_0_0_1px_rgba(15,23,42,0.06)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-slate-900 dark:text-slate-200 dark:shadow-[inset_0_0_0_1px_rgba(148,163,184,0.15)]`}
     >
       <span className="sr-only">Toggle theme</span>
       <span
@@ -66,10 +73,10 @@ const ThemeToggle = () => {
         className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-br from-white/35 via-transparent to-black/10 opacity-70 dark:from-white/5 dark:via-transparent dark:to-black/40"
       />
       <SunIcon
-        className={`relative h-5 w-5 transition-all duration-200 ${resolvedTheme === 'light' ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}
+        className={`relative ${iconSizeClasses} transition-all duration-200 ${resolvedTheme === 'light' ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}
       />
       <MoonIcon
-        className={`absolute h-5 w-5 transition-all duration-200 ${resolvedTheme === 'dark' ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}
+        className={`absolute ${iconSizeClasses} transition-all duration-200 ${resolvedTheme === 'dark' ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}
       />
     </button>
   );
