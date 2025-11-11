@@ -8,13 +8,19 @@ export async function GET(request: Request) {
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") as EmailOtpType | null;
 
+  const nextParam = url.searchParams.get("next");
+
   if (!tokenHash || !type) {
     return NextResponse.redirect(
       new URL("/login?error=invalid_link", request.url)
     );
   }
 
-  const res = NextResponse.redirect(new URL("/profile", request.url));
+  // If the nextParam is a full URL, only use the path part (pathname)
+  const nextUrl = nextParam ? new URL(nextParam, request.url) : null;
+  const redirectPath = nextUrl?.pathname ?? "/profile";
+
+  const res = NextResponse.redirect(new URL(redirectPath, request.url));
   res.headers.set(
     "Cache-Control",
     "no-store, no-cache, must-revalidate, max-age=0"
@@ -44,16 +50,16 @@ export async function GET(request: Request) {
     token_hash: tokenHash,
   });
 
-   if (error) {
-     const r = NextResponse.redirect(
-       new URL("/login?error=confirmation_failed", request.url)
-     );
-     r.headers.set(
-       "Cache-Control",
-       "no-store, no-cache, must-revalidate, max-age=0"
-     );
-     return r;
-   }
+  if (error) {
+    const r = NextResponse.redirect(
+      new URL("/login?error=confirmation_failed", request.url)
+    );
+    r.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, max-age=0"
+    );
+    return r;
+  }
 
-   return res;
+  return res;
 }

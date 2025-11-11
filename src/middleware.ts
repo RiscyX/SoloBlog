@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ["/", "/login", "/register", "/verify"];
+  const publicPaths = ["/", "/login", "/register", "/verify", '/forgot-password', '/update-password'];
   const isAuthCallback = pathname.startsWith("/confirm");
 
   if (user && (pathname === "/login" || pathname === "/register")) {
