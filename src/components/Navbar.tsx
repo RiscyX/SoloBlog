@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { User } from "@supabase/supabase-js";
 import ThemeToggle from "./theme-toggle";
 import BrandMark from "./Brandmark";
 
-const Navbar = () => {
+type NavbarProps = {
+  user: User | null;
+};
+
+const Navbar = ({ user }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -21,7 +26,7 @@ const Navbar = () => {
   return (
     <>
       <header className="sticky top-4 z-30 w-full px-4">
-        <nav className="flex w-full items-center justify-between gap-4 px-6 py-3 rounded-lg bg-background shadow-sm">
+        <nav className="flex w-full items-center justify-between gap-4 px-2 py-2">
           <Link
             href="/"
             className="flex items-center gap-3 text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -29,30 +34,38 @@ const Navbar = () => {
             <BrandMark />
             <span className="text-lg font-semibold">SoloBlog</span>
           </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/login"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm"
-            >
-              Register
-            </Link>
-            <Link href="/dashboard">
-              <Image
-                src="/avatar-placeholder.svg"
-                alt="Profile avatar"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
-                priority
-              />
-              <ThemeToggle />
-            </Link>
+
+          {/* Desktop menu */}
+          <div className="hidden items-center gap-2 sm:flex sm:gap-3">
+            {!user ? (
+              <>
+                <Link href="/login" className="link">
+                  Login
+                </Link>
+                <Link href="/register" className="btn">
+                  Register
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/dashboard">
+                  <Image
+                    src="/avatar-placeholder.svg"
+                    alt="Profile avatar"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
+                    priority
+                  />
+                </Link>
+                <form action="/logout" method="POST">
+                  <button type="submit" className="btn-outline">
+                    Logout
+                  </button>
+                </form>
+              </>
+            )}
+            <ThemeToggle />
           </div>
 
           {/* Mobile menu button */}
@@ -101,19 +114,37 @@ const Navbar = () => {
             }`}
           >
             <div className="flex items-center gap-8">
-              <Image
-                src="/avatar-placeholder.svg"
-                alt="Profile avatar"
-                width={80}
-                height={80}
-                className="h-20 w-20 rounded-full border border-border/50 bg-card object-cover"
-                priority
-              />
-
+              {!user ? (
+                <>
+                  <Link href="/login" className="link">
+                    Login
+                  </Link>
+                  <Link href="/register" className="btn">
+                    Register
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/dashboard">
+                    <Image
+                      src="/avatar-placeholder.svg"
+                      alt="Profile avatar"
+                      width={80}
+                      height={80}
+                      className="h-20 w-20 rounded-full border border-border/50 bg-card object-cover"
+                      priority
+                    />
+                  </Link>
+                  <form action="/logout" method="POST">
+                    <button type="submit" className="btn-outline">
+                      Logout
+                    </button>
+                  </form>
+                </>
+              )}
               <ThemeToggle size="large" />
             </div>
           </div>
-          <ThemeToggle />
         </div>
       </div>
     </>
