@@ -55,7 +55,7 @@ export async function middleware(request: NextRequest) {
   const isAuthCallback = pathname.startsWith("/confirm");
 
   if (user && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/profile", request.url));
   }
 
   if (!user && !publicPaths.includes(pathname) && !isAuthCallback) {

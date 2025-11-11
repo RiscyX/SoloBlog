@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     );
   }
 
-  const res = NextResponse.redirect(new URL("/dashboard", request.url));
+  const res = NextResponse.redirect(new URL("/profile", request.url));
   res.headers.set(
     "Cache-Control",
     "no-store, no-cache, must-revalidate, max-age=0"

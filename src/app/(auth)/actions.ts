@@ -36,7 +36,7 @@ export async function login(
 
   revalidatePath("/", "layout");
 
-  redirect("/dashboard");
+  redirect("/profile");
 }
 
 export async function register(

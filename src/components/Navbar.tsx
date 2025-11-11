@@ -48,7 +48,7 @@ const Navbar = ({ user }: NavbarProps) => {
               </>
             ) : (
               <>
-                <Link href="/dashboard">
+                <Link href="/profile">
                   <Image
                     src="/avatar-placeholder.svg"
                     alt="Profile avatar"
@@ -125,7 +125,7 @@ const Navbar = ({ user }: NavbarProps) => {
                 </>
               ) : (
                 <>
-                  <Link href="/dashboard">
+                  <Link href="/profile">
                     <Image
                       src="/avatar-placeholder.svg"
                       alt="Profile avatar"
