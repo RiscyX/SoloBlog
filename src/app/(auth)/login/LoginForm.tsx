@@ -12,12 +12,9 @@ export default function LoginForm() {
 
   const message = searchParams.get("message");
 
-  const [formState, formAction] = useActionState<FormState, FormData>(
-    async (prevState, formData) => {
-      return await login(prevState, formData);
-    },
-    { error: null }
-  );
+  const [formState, formAction] = useActionState<FormState, FormData>(login, {
+    error: null,
+  });
 
   const [showPassword, setShowPassword] = useState(false);
 

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
+//import { useRouter } from "next/navigation";
 
 export type FormState = {
   error: string | null;
@@ -67,4 +68,44 @@ export async function register(
   }
 
   redirect("/verify");
+}
+
+export async function requestPasswordReset(
+  _prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const email = String(formData.get("email") ?? "");
+
+  const supabase = await createClient();
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/update-password`,
+  });
+
+  return { error: null };
+}
+
+export async function updateUserPassword(
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const password = String(formData.get("password") ?? "");
+  const passwordAgain = String(formData.get("passwordAgain") ?? "");
+
+  if (password !== passwordAgain) {
+    return { error: "Passwords do not match." };
+  }
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  // Force logout after password update
+  await supabase.auth.signOut();
+
+  
+  // Then redirect to login page with a message
+  redirect("/login?message=password-updated");
 }

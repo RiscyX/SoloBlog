@@ -1,67 +1,66 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { requestPasswordReset, type FormState } from "../../actions.ts";
+import { useState, useActionState, useEffect } from "react";
+import Input from "@/components/Input.tsx";
+import Submit from "@/components/Submit.tsx";
 
 export default function ForgotPasswordForm() {
-  const supabase = createClient();
+  const initialState: FormState = { error: null };
+  const [formState, formAction] = useActionState<FormState, FormData>(
+    requestPasswordReset,
+    initialState
+  );
 
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-  const [err, setErr] = useState<string | null>(null);
+  const [lastSent, setLastSent] = useState<number | null>(null);
+  const [isCooldown, setIsCooldown] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    setStatus("loading");
-    setErr(null);
+  const waitTime = 10000; // 10 seconds
+  useEffect(() => {
+    if (lastSent === null) return;
 
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const checkCooldown = () => {
+      const stillCooling = Date.now() - lastSent < waitTime;
+      setIsCooldown(stillCooling);
+    };
+    checkCooldown();
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/update-password`,
-    });
+    const interval = setInterval(checkCooldown, 1000);
+    return () => clearInterval(interval);
+  }, [lastSent]);
 
-    if (error) {
-      setStatus("error");
-      setErr(error.message);
-      return;
-    }
-    setStatus("success");
-  }
+  const handleAction = async (formData: FormData) => {
+    if (isCooldown) return;
+    setLastSent(Date.now());
+    setSubmitted(true);
+    await formAction(formData);
+  };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form action={handleAction} className="space-y-8">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium">
-          Type in your email address so we can send you a password reset link.
-        </label>
-        <input
+        <Input
+          label="Email"
           id="email"
           type="email"
+          name="email"
+          placeholder=""
           required
-          className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
         />
       </div>
+      <Submit mode="Send reset link" disableMode="Sending..." />
 
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="w-full rounded-md border px-3 py-2 text-sm font-medium"
-      >
-        {status === "loading" ? "Sending..." : "Send reset link"}
-      </button>
-
-      {status === "success" && (
-        <p className="text-sm text-green-600">
-          Check your email for the reset link.
+      {formState?.error === null && submitted && (
+        <p className="text-sm">
+          If an account exists with this email a password reset link was sent.
         </p>
       )}
-      {status === "error" && err && (
-        <p className="text-sm text-red-600">{err}</p>
+
+      {formState.error && (
+        <p className="text-red-600 text-sm">
+          Something went wrong. Please try again later.
+        </p>
       )}
     </form>
   );
