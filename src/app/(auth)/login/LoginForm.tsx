@@ -21,9 +21,9 @@ export default function LoginForm() {
   return (
     <>
       {message === "password-updated" && (
-        <p className="text-green-600 mb-4">
-          Your password has been updated. Please sign in with your new password.
-        </p>
+        <div className="mb-4 rounded-md border p-3 text-sm bg-emerald-50 border-emerald-200 text-emerald-800">
+          Password updated. Please sign in again.
+        </div>
       )}
       <form action={formAction} className="space-y-8">
         <div>

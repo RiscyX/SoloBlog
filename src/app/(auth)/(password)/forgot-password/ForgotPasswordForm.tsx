@@ -19,15 +19,11 @@ export default function ForgotPasswordForm() {
   const waitTime = 10000; // 10 seconds
   useEffect(() => {
     if (lastSent === null) return;
-
-    const checkCooldown = () => {
-      const stillCooling = Date.now() - lastSent < waitTime;
-      setIsCooldown(stillCooling);
-    };
-    checkCooldown();
-
-    const interval = setInterval(checkCooldown, 1000);
-    return () => clearInterval(interval);
+    
+    const id = setInterval(() => {
+      setIsCooldown(Date.now() - lastSent < waitTime);
+    }, 1000);
+    return () => clearInterval(id);
   }, [lastSent]);
 
   const handleAction = async (formData: FormData) => {
@@ -45,11 +41,11 @@ export default function ForgotPasswordForm() {
           id="email"
           type="email"
           name="email"
-          placeholder=""
+          placeholder="you@example.com"
           required
         />
       </div>
-      <Submit mode="Send reset link" disableMode="Sending..." />
+      <Submit mode="Reset Password" disableMode="Sending email..." />
 
       {formState?.error === null && submitted && (
         <p className="text-sm">

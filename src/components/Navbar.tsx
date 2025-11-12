@@ -42,7 +42,10 @@ const Navbar = ({ user }: NavbarProps) => {
                 <Link href="/login" className="link">
                   Login
                 </Link>
-                <Link href="/register" className="btn">
+                <Link
+                  href="/register"
+                  className="text-center w-full py-3 px-4 bg-primary hover:bg-accent text-primary-foreground font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   Register
                 </Link>
               </>

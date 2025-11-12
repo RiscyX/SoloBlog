@@ -87,7 +87,7 @@ export async function requestPasswordReset(
 }
 
 export async function updateUserPassword(
-  prevState: FormState,
+  _prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
   const password = String(formData.get("password") ?? "");
@@ -96,11 +96,15 @@ export async function updateUserPassword(
   if (password !== passwordAgain) {
     return { error: "Passwords do not match." };
   }
-  const supabase = await createClient();
 
+  const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({
     password,
   });
+
+  if(error) {
+    return { error: "Could not update password." };
+  }
 
   // Force logout after password update
   await supabase.auth.signOut();
