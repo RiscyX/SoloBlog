@@ -1,4 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
@@ -18,28 +18,18 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get: (name) => request.cookies.get(name)?.value,
-        set: (name, value, options) => {
-          request.cookies.set({ name, value, ...options });
-          response = NextResponse.next({
-            request: { headers: request.headers },
-          });
-          response.cookies.set({ name, value, ...options });
-          response.headers.set(
-            "Cache-Control",
-            "no-store, no-cache, must-revalidate, max-age=0"
-          );
+        get(name: string) {
+          return request.cookies.get(name)?.value;
         },
-        remove: (name, options) => {
+        set(name: string, value: string, options: CookieOptions) {
+          // The Supabase client will modify the request and response cookies
+          request.cookies.set({ name, value, ...options });
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          // The Supabase client will modify the request and response cookies
           request.cookies.set({ name, value: "", ...options });
-          response = NextResponse.next({
-            request: { headers: request.headers },
-          });
           response.cookies.set({ name, value: "", ...options });
-          response.headers.set(
-            "Cache-Control",
-            "no-store, no-cache, must-revalidate, max-age=0"
-          );
         },
       },
     }
@@ -49,9 +39,17 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ["/", "/login", "/register", "/verify", '/forgot-password', '/update-password'];
+  const publicPaths = [
+    "/",
+    "/login",
+    "/register",
+    "/verify",
+    "/forgot-password",
+    "/update-password",
+  ];
   const isAuthCallback = pathname.startsWith("/confirm");
 
   if (user && (pathname === "/login" || pathname === "/register")) {

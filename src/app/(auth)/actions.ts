@@ -77,7 +77,8 @@ export async function requestPasswordReset(
   const email = String(formData.get("email") ?? "");
 
   const supabase = await createClient();
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const headersList = await headers();
+  const origin = headersList.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL!;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/update-password`,
@@ -86,7 +87,7 @@ export async function requestPasswordReset(
   return { error: null };
 }
 
-export async function updateUserPassword(
+/*export async function updateUserPassword(
   _prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
@@ -113,3 +114,27 @@ export async function updateUserPassword(
   // Then redirect to login page with a message
   redirect("/login?message=password-updated");
 }
+
+export async function exchangeCodeForSession(
+  prevState: any,
+  formData: FormData
+) {
+  const code = formData.get("code");
+
+  if (!code || typeof code !== "string") {
+    return redirect("/error?message=Invalid recovery code.");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    return redirect(
+      `/auth/error?message=Failed to exchange code for session: ${error.message}`
+    );
+  }
+
+  // On success, redirect to the update password page (without the code)
+  // The session is now set, so the page will render the form.
+  redirect("/update-password");
+}*/

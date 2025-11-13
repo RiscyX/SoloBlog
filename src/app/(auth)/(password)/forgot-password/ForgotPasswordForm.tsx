@@ -4,8 +4,11 @@ import { requestPasswordReset, type FormState } from "../../actions.ts";
 import { useState, useActionState, useEffect } from "react";
 import Input from "@/components/Input.tsx";
 import Submit from "@/components/Submit.tsx";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordForm() {
+  const router = useRouter();
+
   const initialState: FormState = { error: null };
   const [formState, formAction] = useActionState<FormState, FormData>(
     requestPasswordReset,
@@ -46,6 +49,18 @@ export default function ForgotPasswordForm() {
         />
       </div>
       <Submit mode="Reset Password" disableMode="Sending email..." />
+
+      {!submitted && (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="text-primary"
+          >
+            <span>&larr;</span> Back to login
+          </button>
+        </div>
+      )}
 
       {formState?.error === null && submitted && (
         <p className="text-sm">

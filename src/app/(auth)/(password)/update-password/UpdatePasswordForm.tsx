@@ -1,21 +1,55 @@
 "use client";
 
-import { updateUserPassword, type FormState } from "../../actions.ts";
-import { useState, useActionState } from "react";
+import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 import Input from "@/components/Input.tsx";
 import Submit from "@/components/Submit.tsx";
-
 export default function UpdatePasswordForm() {
-  const [formState, formAction] = useActionState<FormState, FormData>(
-    updateUserPassword,
-    { error: null }
-  );
+  const supabase = createClient();
+  const router = useRouter();
+
+  const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [err, setErr] = useState<string | null>(null);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    if (password !== passwordAgain) {
+      setErr("Passwords do not match");
+      return;
+    }
+
+    setStatus("loading");
+    setErr(null);
+
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      setStatus("error");
+      setErr(error.message);
+      return;
+    }
+    setStatus("success");
+
+    // Force logout after password update
+    await supabase.auth.signOut();
+
+    // Then redirect to login page with a message
+    router.replace("/login?message=password-updated");
+  }
+
   return (
-    <form action={formAction} className="space-y-4">
+    <form onSubmit={onSubmit} className="space-y-4">
       <div>
         <Input label="New password" id="password" />
         <div className="relative">
@@ -26,6 +60,7 @@ export default function UpdatePasswordForm() {
             name="password"
             placeholder="••••••••"
             minLength={8}
+            onChange={(e: any) => setPassword(e.target.value)}
             required
           />
           <button
@@ -74,7 +109,7 @@ export default function UpdatePasswordForm() {
       </div>
 
       <div>
-        <Input label="New password again" id="passwordAgain" />
+        <Input label="New password again" id="password" />
         <div className="relative">
           <Input
             label=""
@@ -83,6 +118,7 @@ export default function UpdatePasswordForm() {
             name="passwordAgain"
             placeholder="••••••••"
             minLength={8}
+            onChange={(e: any) => setPasswordAgain(e.target.value)}
             required
           />
           <button
@@ -130,16 +166,24 @@ export default function UpdatePasswordForm() {
         </div>
       </div>
 
-      <Submit mode="Update password" disableMode="Updating..." />
+      <Submit
+        mode="Update password"
+        disableMode="Updating..."
+        status={status}
+      />
 
-      {formState.error === null && (
-        <p className="text-sm">Password updated successfully.</p>
+      {status === "success" && (
+        <p className="text-sm text-green-600">Password updated successfully.</p>
       )}
-
-      {formState.error && (
-        <p className="text-red-600 text-sm">
-          Something went wrong. Please try again later.
-        </p>
+      {status === "error" && err && (
+        <div className="space-y-3">
+          <div className="text-center text-red-600 text-sm">{err}</div>
+          <div className="text-center text-sm">
+            <Link href="/forgot-password" className="underline">
+              Request a new reset link
+            </Link>
+          </div>
+        </div>
       )}
     </form>
   );
