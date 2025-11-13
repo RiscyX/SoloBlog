@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
@@ -13,16 +13,89 @@ type NavbarProps = {
 
 const Navbar = ({ user }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDesktopUserMenuOpen, setIsDesktopUserMenuOpen] = useState(false);
+  const [isMobileUserMenuOpen, setIsMobileUserMenuOpen] = useState(false);
+  const desktopUserMenuRef = useRef<HTMLDivElement | null>(null);
+  const mobileUserMenuRef = useRef<HTMLDivElement | null>(null);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-    // Prevent body scroll when menu is open
-    if (!isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    const nextMenuState = !isMenuOpen;
+    setIsMenuOpen(nextMenuState);
+    setIsDesktopUserMenuOpen(false);
+    setIsMobileUserMenuOpen(false);
   };
+
+  const toggleDesktopUserMenu = () => {
+    setIsDesktopUserMenuOpen((prev) => !prev);
+    setIsMobileUserMenuOpen(false);
+  };
+
+  const toggleMobileUserMenu = () => {
+    setIsMobileUserMenuOpen((prev) => !prev);
+    setIsDesktopUserMenuOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isDesktopUserMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const targetNode = event.target as Node | null;
+      if (desktopUserMenuRef.current && targetNode && !desktopUserMenuRef.current.contains(targetNode)) {
+        setIsDesktopUserMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsDesktopUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isDesktopUserMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileUserMenuOpen) {
+      return;
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const targetNode = event.target as Node | null;
+      if (mobileUserMenuRef.current && targetNode && !mobileUserMenuRef.current.contains(targetNode)) {
+        setIsMobileUserMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileUserMenuOpen]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
   return (
     <>
       <header className="sticky top-4 z-30 w-full px-4">
@@ -32,7 +105,7 @@ const Navbar = ({ user }: NavbarProps) => {
             className="flex items-center gap-3 text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <BrandMark />
-            <span className="text-lg font-semibold">SoloBlog</span>
+            <span className="text-xl font-semibold sm:text-lg">SoloBlog</span>
           </Link>
 
           {/* Desktop menu */}
@@ -51,21 +124,62 @@ const Navbar = ({ user }: NavbarProps) => {
               </>
             ) : (
               <>
-                <Link href="/profile">
-                  <Image
-                    src="/avatar-placeholder.svg"
-                    alt="Profile avatar"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
-                    priority
-                  />
-                </Link>
-                <form action="/logout" method="POST">
-                  <button type="submit" className="btn-outline" aria-label="Logout">
-                    Logout
+                <div className="relative" ref={desktopUserMenuRef}>
+                  <button
+                    type="button"
+                    onClick={toggleDesktopUserMenu}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-card transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    aria-haspopup="menu"
+                    aria-expanded={isDesktopUserMenuOpen}
+                    aria-label="Open user menu"
+                  >
+                    <Image
+                      src="/avatar-placeholder.svg"
+                      alt="Profile avatar"
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-full object-cover"
+                      priority
+                    />
                   </button>
-                </form>
+                  {isDesktopUserMenuOpen && (
+                    <div
+                      className="absolute right-0 mt-2 w-48 rounded-xl border border-border/60 bg-card shadow-card z-40 transition-all duration-150 ease-out"
+                      role="menu"
+                      aria-hidden={!isDesktopUserMenuOpen}
+                      tabIndex={-1}
+                    >
+                      <ul className="py-2" aria-label="User options">
+                        <li>
+                          <Link
+                            href="/profile"
+                            className="flex items-center px-4 py-2 text-sm text-fg transition hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            role="menuitem"
+                            onClick={() => setIsDesktopUserMenuOpen(false)}
+                          >
+                            Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <form
+                            action="/logout"
+                            method="POST"
+                            onSubmit={() => {
+                              setTimeout(() => setIsDesktopUserMenuOpen(false), 0);
+                            }}
+                          >
+                            <button
+                              type="submit"
+                              className="flex w-full items-center justify-between px-4 py-2 text-left text-sm text-destructive transition hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              Logout
+                            </button>
+                          </form>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </>
             )}
             <ThemeToggle />
@@ -116,33 +230,83 @@ const Navbar = ({ user }: NavbarProps) => {
                 : "translate-y-4 opacity-0"
             }`}
           >
-            <div className="flex items-center gap-8">
+            <div className="flex flex-col items-center gap-8">
               {!user ? (
                 <>
-                  <Link href="/login" className="link">
+                  <Link href="/login" className="link text-2xl">
                     Login
                   </Link>
-                  <Link href="/register" className="btn">
+                  <Link
+                    href="/register"
+                    className="text-2xl text-center py-3 px-4 bg-primary hover:bg-accent text-primary-foreground font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     Register
                   </Link>
                 </>
               ) : (
                 <>
-                  <Link href="/profile">
-                    <Image
-                      src="/avatar-placeholder.svg"
-                      alt="Profile avatar"
-                      width={80}
-                      height={80}
-                      className="h-20 w-20 rounded-full border border-border/50 bg-card object-cover"
-                      priority
-                    />
-                  </Link>
-                  <form action="/logout" method="POST">
-                    <button type="submit" className="btn-outline">
-                      Logout
+                  <div className="relative w-full max-w-xs" ref={mobileUserMenuRef}>
+                    <button
+                      type="button"
+                      onClick={toggleMobileUserMenu}
+                      className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-border/50 bg-card transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      aria-haspopup="menu"
+                      aria-expanded={isMobileUserMenuOpen}
+                      aria-label="Open user menu"
+                    >
+                      <Image
+                        src="/avatar-placeholder.svg"
+                        alt="Profile avatar"
+                        width={80}
+                        height={80}
+                        className="h-20 w-20 rounded-full object-cover"
+                        priority
+                      />
                     </button>
-                  </form>
+                    {isMobileUserMenuOpen && (
+                      <div
+                        className="mt-4 w-full rounded-xl border border-border/60 bg-card shadow-card transition-all duration-150 ease-out"
+                        role="menu"
+                        aria-hidden={!isMobileUserMenuOpen}
+                        tabIndex={-1}
+                      >
+                        <ul className="py-2" aria-label="User options">
+                          <li>
+                            <Link
+                              href="/profile"
+                              className="flex items-center justify-center px-4 py-2 text-lg text-fg transition hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                              role="menuitem"
+                              onClick={() => {
+                                setIsMobileUserMenuOpen(false);
+                                setIsMenuOpen(false);
+                              }}
+                            >
+                              Profile
+                            </Link>
+                          </li>
+                          <li>
+                            <form
+                              action="/logout"
+                              method="POST"
+                              onSubmit={() => {
+                                setTimeout(() => {
+                                  setIsMobileUserMenuOpen(false);
+                                  setIsMenuOpen(false);
+                                }, 0);
+                              }}
+                            >
+                              <button
+                                type="submit"
+                                className="flex w-full items-center justify-center px-4 py-2 text-lg text-destructive transition hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                              >
+                                Logout
+                              </button>
+                            </form>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
               <ThemeToggle size="large" />
