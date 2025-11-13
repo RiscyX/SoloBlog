@@ -1,9 +1,77 @@
-import { type NextRequest } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  // update user's auth session
-  return await updateSession(request);
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const { pathname } = request.nextUrl;
+  const noCachePatterns = [
+    /^\/(login|register|forgot-password|update-password|profile)(\/|$)/,
+    /^\/confirm/,
+    /^\/logout/,
+    /^\/api/,
+  ];
+
+  const shouldBypassCache = noCachePatterns.some((pattern) =>
+    pattern.test(pathname)
+  );
+
+  if (shouldBypassCache) {
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, max-age=0"
+    );
+  }
+
+  // Create a Supabase client for middleware
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          // The Supabase client will modify the request and response cookies
+          request.cookies.set({ name, value, ...options });
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          // The Supabase client will modify the request and response cookies
+          request.cookies.set({ name, value: "", ...options });
+          response.cookies.set({ name, value: "", ...options });
+        },
+      },
+    }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const publicPaths = [
+    "/",
+    "/login",
+    "/register",
+    "/verify",
+    "/forgot-password",
+    "/update-password",
+  ];
+  const isAuthCallback = pathname.startsWith("/confirm");
+
+  if (user && (pathname === "/login" || pathname === "/register")) {
+    return NextResponse.redirect(new URL("/profile", request.url));
+  }
+
+  if (!user && !publicPaths.includes(pathname) && !isAuthCallback) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return response;
 }
 
 export const config = {

@@ -1,4 +1,11 @@
+import { Metadata } from "next";
+
 import ErrorActions from "./ErrorActions";
+
+export const metadata: Metadata = {
+  title: "Error | SoloBlog",
+  description: "Something went wrong. Please try again.",
+};
 
 export default function ErrorPage({ searchParams }: { searchParams?: { message?: string, from?: string } }) {
   const message = searchParams?.message ?? "Sorry, something went wrong";

@@ -1,61 +1,62 @@
 "use client";
 
-import { login } from "../actions";
+import { login, type FormState } from "../actions";
 import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
-import styles from "../auth.module.css";
-
-
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import Submit from "@/components/Submit";
+import Input from "@/components/Input";
 
 export default function LoginForm() {
-  const [state, action] = useActionState(login, undefined);
+  const searchParams = useSearchParams();
 
-function SubmitButton() {
-  const { pending } = useFormStatus(); // To track the form submission status
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`w-full p-2 my-3 text-white rounded ${styles["auth-button"]}`}
-    >
-      {pending ? "Logging in..." : "Login"}
-    </button>
-  );
-}
+  const message = searchParams.get("message");
+
+  const [formState, formAction] = useActionState<FormState, FormData>(login, {
+    error: null,
+  });
 
   return (
-    <form
-      action={action}
-      className={`flex flex-col items-center ${styles["auth-form"]}`}
-    >
-      {state?.errors?.general && (
-        <p style={{ color: "red" }}>{state.errors.general[0]}</p>
+    <>
+      {message === "password-updated" && (
+        <div className="mb-4 rounded-md border p-3 text-sm bg-emerald-50 border-emerald-200 text-emerald-800">
+          Password updated. Please sign in again.
+        </div>
       )}
-      <div>
-        <label htmlFor="email" className="block mt-4 text-lg">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password" className="block mt-4 text-lg">
-          Password:
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
-      <SubmitButton />
-    </form>
+      <form action={formAction} className="space-y-8">
+        <div className="space-y-6">
+          <Input
+            label="Email"
+            id="email"
+            type="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+
+          <div className="space-y-2">
+            <Input
+              label="Password"
+              id="password"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              allowPasswordToggle
+              required
+            />
+            <div className="text-right">
+              <Link
+                href="/forgot-password"
+                className="text-md text-primary transition-colors hover:text-accent"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          </div>
+        </div>
+        {formState?.error && <p className="text-red-500">{formState.error}</p>}
+        <Submit mode="Login" disableMode="Logging in..." />
+      </form>
+    </>
   );
 }

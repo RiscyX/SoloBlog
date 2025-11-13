@@ -1,3 +1,12 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "SoloBlog | Your Personal Blogging Platform",
+  description:
+    "Write, share, and connect with other writers on SoloBlog. A simple and powerful platform for your thoughts.",
+  keywords: "blog, writing, personal blog, articles, content creation",
+};
+
 export default function Home() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">

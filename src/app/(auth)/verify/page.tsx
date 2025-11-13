@@ -1,15 +1,18 @@
 import Link from "next/link";
-import styles from "../auth.module.css";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Verify Email | SoloBlog",
+  description: "Verify your email address to complete your registration.",
+};
 
 export default function VerifyPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className={`max-w-md w-full space-y-8 p-8 ${styles["auth-form"]}`}>
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-white">
-            Check Your Email
-          </h2>
-          <p className="mt-4 text-sm text-gray-300">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-bg w-4/5 h-2/3">
+      <div className="w-full max-w-xl px-12 py-12 bg-card rounded-2xl border border-border dark:shadow-md dark:shadow-primary">
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold text-fg mb-2">Check Your Email</h2>
+          <p className="mt-4 text-muted">
             We've sent you a verification link. Please check your email and
             click the link to verify your account.
           </p>
@@ -33,7 +36,7 @@ export default function VerifyPage() {
             </svg>
           </div>
 
-          <div className="text-center text-sm text-gray-400">
+          <div className="text-center mt-6 text-muted text-md">
             <p>Didn't receive the email? Check your spam folder or</p>
             <Link
               href="/register"
@@ -43,10 +46,10 @@ export default function VerifyPage() {
             </Link>
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-6">
             <Link
               href="/login"
-              className={`inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${styles["auth-button"]} hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500`}
+              className="w-full py-3 px-4 bg-primary hover:bg-accent text-primary-foreground font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back to Login
             </Link>

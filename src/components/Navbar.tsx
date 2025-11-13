@@ -1,23 +1,28 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import ThemeToggle from './theme-toggle';
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { User } from "@supabase/supabase-js";
+import ThemeToggle from "./theme-toggle";
+import BrandMark from "./Brandmark";
 
-const Navbar = () => {
+type NavbarProps = {
+  user: User | null;
+};
+
+const Navbar = ({ user }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     // Prevent body scroll when menu is open
     if (!isMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
   };
-
   return (
     <>
       <header className="sticky top-4 z-30 w-full px-4">
@@ -32,14 +37,37 @@ const Navbar = () => {
 
           {/* Desktop menu */}
           <div className="hidden items-center gap-2 sm:flex sm:gap-3">
-            <Image
-              src="/avatar-placeholder.svg"
-              alt="Profile avatar"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
-              priority
-            />
+            {!user ? (
+              <>
+                <Link href="/login" className="link">
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-center py-3 px-4 bg-primary hover:bg-accent text-primary-foreground font-semibold rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Register
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/profile">
+                  <Image
+                    src="/avatar-placeholder.svg"
+                    alt="Profile avatar"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full border border-border/50 bg-card object-cover"
+                    priority
+                  />
+                </Link>
+                <form action="/logout" method="POST">
+                  <button type="submit" className="btn-outline" aria-label="Logout">
+                    Logout
+                  </button>
+                </form>
+              </>
+            )}
             <ThemeToggle />
           </div>
 
@@ -60,8 +88,8 @@ const Navbar = () => {
       <div
         className={`fixed inset-0 z-50 overflow-hidden bg-secondary transition-all duration-300 ease-in-out sm:hidden ${
           isMenuOpen
-            ? 'pointer-events-auto opacity-100'
-            : 'pointer-events-none opacity-0'
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
         }`}
       >
         <div className="flex h-full flex-col overflow-hidden">
@@ -84,58 +112,45 @@ const Navbar = () => {
           <div
             className={`flex flex-1 flex-col items-center justify-center px-6 transition-all duration-500 ${
               isMenuOpen
-                ? 'translate-y-0 opacity-100'
-                : 'translate-y-4 opacity-0'
+                ? "translate-y-0 opacity-100"
+                : "translate-y-4 opacity-0"
             }`}
           >
             <div className="flex items-center gap-8">
-              <Image
-                src="/avatar-placeholder.svg"
-                alt="Profile avatar"
-                width={80}
-                height={80}
-                className="h-20 w-20 rounded-full border border-border/50 bg-card object-cover"
-                priority
-              />
-
+              {!user ? (
+                <>
+                  <Link href="/login" className="link">
+                    Login
+                  </Link>
+                  <Link href="/register" className="btn">
+                    Register
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/profile">
+                    <Image
+                      src="/avatar-placeholder.svg"
+                      alt="Profile avatar"
+                      width={80}
+                      height={80}
+                      className="h-20 w-20 rounded-full border border-border/50 bg-card object-cover"
+                      priority
+                    />
+                  </Link>
+                  <form action="/logout" method="POST">
+                    <button type="submit" className="btn-outline">
+                      Logout
+                    </button>
+                  </form>
+                </>
+              )}
               <ThemeToggle size="large" />
             </div>
           </div>
         </div>
       </div>
     </>
-  );
-};
-
-const BrandMark = () => {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-9 w-9"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="soloblogGradient" x1="8" y1="6" x2="32" y2="34" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#A855F7" />
-          <stop offset="50%" stopColor="#8B5CF6" />
-          <stop offset="100%" stopColor="#7C3AED" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M10 8C10 5.23858 12.2386 3 15 3H25C27.7614 3 30 5.23858 30 8C30 10.7614 27.7614 13 25 13H15C12.2386 13 10 10.7614 10 8Z"
-        fill="url(#soloblogGradient)"
-      />
-      <path
-        d="M8 20C8 17.2386 10.6863 15 14 15H26C29.3137 15 32 17.2386 32 20C32 22.7614 29.3137 25 26 25H14C10.6863 25 8 22.7614 8 20Z"
-        fill="url(#soloblogGradient)"
-      />
-      <path
-        d="M10 32C10 29.2386 12.2386 27 15 27H25C27.7614 27 30 29.2386 30 32C30 34.7614 27.7614 37 25 37H15C12.2386 37 10 34.7614 10 32Z"
-        fill="url(#soloblogGradient)"
-      />
-    </svg>
   );
 };
 
@@ -157,7 +172,7 @@ const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
         x2="21"
         y2="6"
         className={`origin-center transition-all duration-300 ${
-          isOpen ? 'translate-y-[6px] rotate-45' : ''
+          isOpen ? "translate-y-[6px] rotate-45" : ""
         }`}
       />
       <line
@@ -166,7 +181,7 @@ const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
         x2="21"
         y2="12"
         className={`transition-all duration-300 ${
-          isOpen ? 'opacity-0' : 'opacity-100'
+          isOpen ? "opacity-0" : "opacity-100"
         }`}
       />
       <line
@@ -175,7 +190,7 @@ const MenuIcon = ({ isOpen }: { isOpen: boolean }) => {
         x2="21"
         y2="18"
         className={`origin-center transition-all duration-300 ${
-          isOpen ? '-translate-y-[6px] -rotate-45' : ''
+          isOpen ? "-translate-y-[6px] -rotate-45" : ""
         }`}
       />
     </svg>

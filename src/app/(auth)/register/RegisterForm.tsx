@@ -2,72 +2,51 @@
 
 import { useActionState } from "react";
 import { register } from "../actions";
-import { useFormStatus } from "react-dom";
-import styles from "../auth.module.css";
+import Submit from "@/components/Submit";
+import Input from "@/components/Input";
+
+type FormState = { error: string | null };
 
 export default function RegisterForm() {
-  const [state, action] = useActionState(register, undefined);
+  const initialState: FormState = { error: null };
 
-  function SubmitButton() {
-    const { pending } = useFormStatus();
-    return (
-      <button
-        type="submit"
-        disabled={pending}
-        className={`w-full p-2 my-3 text-white rounded ${styles["auth-button"]}`}
-      >
-        {pending ? "Registering..." : "Register"}
-      </button>
-    );
-  }
+  const [formState, formAction] = useActionState<FormState, FormData>(
+    register,
+    initialState
+  );
 
   return (
-    <form
-      action={action}
-      className={`flex flex-col items-center ${styles["auth-form"]}`}
-    >
-      {state?.errors?.general && (
-        <p style={{ color: "red" }}>{state.errors.general[0]}</p> // To ensure it's writing latest error
-      )}
+    <form action={formAction} className="space-y-8">
+      <Input
+        label="Email"
+        id="email"
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        required
+      />
 
-      <div>
-        <label htmlFor="email" className="block mt-4 text-lg">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
+      <Input
+        label="Password"
+        id="password"
+        type="password"
+        name="password"
+        placeholder="••••••••"
+        allowPasswordToggle
+        required
+      />
 
-      <div>
-        <label htmlFor="password" className="block mt-4 text-lg">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="confirmPassword" className="block mt-4 text-lg">
-          Password Again
-        </label>
-        <input
-          id="confirmPassword"
-          type="password"
-          name="confirmPassword"
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
-      <SubmitButton />
+      <Input
+        label="Confirm Password"
+        id="confirmPassword"
+        type="password"
+        name="confirmPassword"
+        placeholder="••••••••"
+        allowPasswordToggle
+        required
+      />
+      {formState?.error && <p className="text-red-500">{formState.error}</p>}
+      <Submit mode="Register" disableMode="Creating account..." />
     </form>
   );
 }

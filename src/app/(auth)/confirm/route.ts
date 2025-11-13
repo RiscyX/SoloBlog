@@ -1,25 +1,65 @@
-import { type EmailOtpType } from "@supabase/supabase-js";
-import { type NextRequest } from "next/server";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import type { EmailOtpType } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const token_hash = searchParams.get("token_hash");
-  const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const tokenHash = url.searchParams.get("token_hash");
+  const type = url.searchParams.get("type") as EmailOtpType | null;
 
-  if (token_hash && type) {
-    const supabase = await createClient();
-    const { error } = await supabase.auth.verifyOtp({
-      type,
-      token_hash,
-    });
+  const nextParam = url.searchParams.get("next");
 
-    if (!error) {
-      redirect(next);
-    }
+  if (!tokenHash || !type) {
+    return NextResponse.redirect(
+      new URL("/login?error=invalid_link", request.url)
+    );
   }
 
-  redirect("/error?message=Email verification failed.&from=register");
+  // If the nextParam is a full URL, only use the path part (pathname)
+  const nextUrl = nextParam ? new URL(nextParam, request.url) : null;
+  const redirectPath = nextUrl?.pathname ?? "/profile";
+
+  const res = NextResponse.redirect(new URL(redirectPath, request.url));
+  res.headers.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, max-age=0"
+  );
+
+  const cookieStore = await cookies();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+
+  const { error } = await supabase.auth.verifyOtp({
+    type,
+    token_hash: tokenHash,
+  });
+
+  if (error) {
+    const r = NextResponse.redirect(
+      new URL("/login?error=confirmation_failed", request.url)
+    );
+    r.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, max-age=0"
+    );
+    return r;
+  }
+
+  return res;
 }

@@ -35,10 +35,6 @@
     --destructive: 0 83% 55%;
   }
 
-/* Debug */
-.probe { color: hsl(var(--primary)); }
-
-/* Alap reset */
 html, body {
   font-family: var(--font-solway), serif;
   height: 100%;
