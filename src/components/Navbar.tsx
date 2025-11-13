@@ -62,7 +62,7 @@ const Navbar = ({ user }: NavbarProps) => {
                   />
                 </Link>
                 <form action="/logout" method="POST">
-                  <button type="submit" className="btn-outline">
+                  <button type="submit" className="btn-outline" aria-label="Logout">
                     Logout
                   </button>
                 </form>

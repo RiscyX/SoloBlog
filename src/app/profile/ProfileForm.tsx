@@ -13,7 +13,7 @@ export default function ProfileForm({
   profile,
 }: {
   user: User;
-  profile: Profile;
+  profile: Profile | null;
 }) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     // TODO: Implement form submission logic

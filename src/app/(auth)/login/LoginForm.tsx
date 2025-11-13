@@ -1,11 +1,11 @@
 "use client";
 
-import { login, type FormState } from "../actions.ts";
+import { login, type FormState } from "../actions";
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Submit from "@/components/Submit.tsx";
-import Input from "@/components/Input.tsx";
+import Submit from "@/components/Submit";
+import Input from "@/components/Input";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();

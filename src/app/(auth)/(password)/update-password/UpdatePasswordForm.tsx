@@ -5,8 +5,8 @@ import { FormEvent, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
-import Input from "@/components/Input.tsx";
-import Submit from "@/components/Submit.tsx";
+import Input from "@/components/Input";
+import Submit from "@/components/Submit";
 export default function UpdatePasswordForm() {
   const supabase = createClient();
   const router = useRouter();

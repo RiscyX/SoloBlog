@@ -7,10 +7,25 @@ export async function middleware(request: NextRequest) {
       headers: request.headers,
     },
   });
-  response.headers.set(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, max-age=0"
+
+  const { pathname } = request.nextUrl;
+  const noCachePatterns = [
+    /^\/(login|register|forgot-password|update-password|profile)(\/|$)/,
+    /^\/confirm/,
+    /^\/logout/,
+    /^\/api/,
+  ];
+
+  const shouldBypassCache = noCachePatterns.some((pattern) =>
+    pattern.test(pathname)
   );
+
+  if (shouldBypassCache) {
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, max-age=0"
+    );
+  }
 
   // Create a Supabase client for middleware
   const supabase = createServerClient(
@@ -38,10 +53,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-
-  const { pathname } = request.nextUrl;
-
   const publicPaths = [
     "/",
     "/login",

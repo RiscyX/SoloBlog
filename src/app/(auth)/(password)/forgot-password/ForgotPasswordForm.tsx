@@ -1,10 +1,12 @@
 "use client";
 
-import { requestPasswordReset, type FormState } from "../../actions.ts";
+import { requestPasswordReset, type FormState } from "../../actions";
 import { useState, useActionState, useEffect } from "react";
-import Input from "@/components/Input.tsx";
-import Submit from "@/components/Submit.tsx";
+import Input from "@/components/Input";
+import Submit from "@/components/Submit";
 import { useRouter } from "next/navigation";
+
+const COOLDOWN_PERIOD_MS = 10000; // 10 seconds
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
@@ -19,12 +21,11 @@ export default function ForgotPasswordForm() {
   const [isCooldown, setIsCooldown] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const waitTime = 10000; // 10 seconds
   useEffect(() => {
     if (lastSent === null) return;
-    
+
     const id = setInterval(() => {
-      setIsCooldown(Date.now() - lastSent < waitTime);
+      setIsCooldown(Date.now() - lastSent < COOLDOWN_PERIOD_MS);
     }, 1000);
     return () => clearInterval(id);
   }, [lastSent]);
@@ -62,7 +63,7 @@ export default function ForgotPasswordForm() {
         </div>
       )}
 
-      {formState?.error === null && submitted && (
+      {submitted && (
         <p className="text-sm">
           If an account exists with this email a password reset link was sent.
         </p>

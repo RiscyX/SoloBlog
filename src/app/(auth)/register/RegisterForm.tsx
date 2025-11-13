@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { register } from "../actions.ts";
-import Submit from "@/components/Submit.tsx";
-import Input from "@/components/Input.tsx";
+import { register } from "../actions";
+import Submit from "@/components/Submit";
+import Input from "@/components/Input";
 
 type FormState = { error: string | null };
 

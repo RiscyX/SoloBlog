@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { Metadata } from "next";
 
-import LoginForm from "./LoginForm.tsx";
+import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
   title: "Login | SoloBlog",
