@@ -1,6 +1,20 @@
 "use client";
 
-export default function ProfileForm({ user, profile }: any) {
+import { User } from "@supabase/supabase-js";
+
+interface Profile {
+  displayName?: string;
+  bio?: string;
+  avatarUrl?: string;
+}
+
+export default function ProfileForm({
+  user,
+  profile,
+}: {
+  user: User;
+  profile: Profile;
+}) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     // TODO: Implement form submission logic
   }
@@ -43,7 +57,7 @@ export default function ProfileForm({ user, profile }: any) {
       <button
         type="submit"
         //disabled={}
-        className="text-white bg-blue-600 hover:bg-blue-700  py-2 px-4 rounded"
+        className="text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded"
       >
         Save
       </button>

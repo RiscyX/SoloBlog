@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { register } from "@/app/(auth)/actions";
 import Link from "next/link";
 import { Metadata } from "next";
 

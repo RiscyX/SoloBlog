@@ -13,7 +13,7 @@ export default async function DashboardLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if(!user) redirect("/login");
+  if (!user) redirect("/login");
 
   return (
     <main className="min-h-screen bg-bg text-fg transition-colors">

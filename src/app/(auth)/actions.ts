@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
-//import { useRouter } from "next/navigation";
 
 export type FormState = {
   error: string | null;
@@ -80,61 +79,9 @@ export async function requestPasswordReset(
   const headersList = await headers();
   const origin = headersList.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL!;
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/update-password`,
   });
 
   return { error: null };
 }
-
-/*export async function updateUserPassword(
-  _prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
-  const password = String(formData.get("password") ?? "");
-  const passwordAgain = String(formData.get("passwordAgain") ?? "");
-
-  if (password !== passwordAgain) {
-    return { error: "Passwords do not match." };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.updateUser({
-    password,
-  });
-
-  if(error) {
-    return { error: "Could not update password." };
-  }
-
-  // Force logout after password update
-  await supabase.auth.signOut();
-
-  
-  // Then redirect to login page with a message
-  redirect("/login?message=password-updated");
-}
-
-export async function exchangeCodeForSession(
-  prevState: any,
-  formData: FormData
-) {
-  const code = formData.get("code");
-
-  if (!code || typeof code !== "string") {
-    return redirect("/error?message=Invalid recovery code.");
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-  if (error) {
-    return redirect(
-      `/auth/error?message=Failed to exchange code for session: ${error.message}`
-    );
-  }
-
-  // On success, redirect to the update password page (without the code)
-  // The session is now set, so the page will render the form.
-  redirect("/update-password");
-}*/
