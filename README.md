@@ -1,6 +1,6 @@
 ## SoloBlog ##
 
-## STILL WORK IN PROGRESS ##
+## STILL WORK IN PROGRESS!!!! ##
 
 SoloBlog is a modern, open-source blogging platform built for creators who work solo but think big.
 It’s a developer-friendly CMS designed to be lightweight, self-hostable, and powerful enough to deliver a full professional publishing experience.
